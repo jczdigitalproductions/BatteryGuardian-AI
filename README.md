@@ -69,3 +69,84 @@ Built with input validation, bounded payloads and results, deterministic explana
 ## License
 
 MIT (see `LICENSE`).
+
+
+## PyTorch + ExecuTorch research upgrade
+
+This version adds a compact PyTorch model, synthetic demo training, held-out test metrics, ONNX export, optional portable ExecuTorch export, and CPU benchmarking. **It does not yet execute on the Hexagon NPU.** See [Snapdragon deployment and validation](docs/DEPLOYMENT.md) for precise limitations, target-device checklist, and real-data requirements.
+
+```powershell
+python -m pip install -r requirements-ml.txt
+python -m ml.train
+python -m ml.export_onnx
+python -m scripts.benchmark
+python -m unittest discover -s tests -v
+```
+
+If you have ExecuTorch installed in a compatible environment, `python -m ml.export_executorch` creates a portable `.pte` file (not Qualcomm delegated). Synthetic accuracy is not evidence of real battery-fault performance.
+
+## Upgrade instructions: existing GitHub installation → PyTorch + ExecuTorch
+
+These steps upgrade an existing checkout of `BatteryGuardian-AI` to the research ML version. **The project runs offline on the CPU; Hexagon NPU execution is not implemented or verified.** Back up any local modifications first.
+
+### A. Replace the source files
+
+1. Download `BatteryGuardian-AI-PyTorch-ExecuTorch.zip` and choose **Extract All** in Windows Explorer.
+2. Open the extracted `BatteryGuardian-AI` folder. It should contain `README.md`, `batteryguardian/`, `ml/`, `tests/`, `scripts/`, `requirements-ml.txt`, and `docs/`.
+3. Copy **the contents** of that folder into your existing local Git repository's `BatteryGuardian-AI` directory, preserving the folder structure and replacing old files when prompted. Do **not** copy the ZIP file into the repository or create a second nested `BatteryGuardian-AI` folder.
+4. Keep your existing `.git` folder; do not overwrite or delete it. Review changes with `git status` and `git diff` before committing.
+
+For a **new** GitHub repository, simply extract the ZIP, open PowerShell in the extracted project directory, and follow [Repository upload](#repository-upload).
+
+### B. Install and validate the ML environment
+
+Open PowerShell in the repository root. Use a Python environment with compatible PyTorch binaries (native Windows ARM64 packages may vary by version). Download dependencies **before** switching the machine offline:
+
+```powershell
+python --version
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements-ml.txt
+python -m unittest discover -s tests -v
+```
+
+If PowerShell blocks activation, use `.venv\Scripts\python.exe` in place of `python` for subsequent commands. The `.venv` folder should remain untracked by Git.
+
+### C. Train, evaluate, and export
+
+```powershell
+python -m ml.train
+python -m ml.export_onnx
+python -m scripts.benchmark
+```
+
+Training uses **synthetic** battery data; evaluation metrics are for demonstration only. The ONNX export requires the `onnx` dependency listed in `requirements-ml.txt`. Inspect the outputs under `artifacts/` and `reports/` and see `docs/DEPLOYMENT.md` for evaluation and hardware-evidence requirements.
+
+If a compatible ExecuTorch build is separately installed, you may additionally run:
+
+```powershell
+python -m ml.export_executorch
+```
+
+This exports a **portable, non-QNN-delegated** ExecuTorch model. It does **not** establish Hexagon NPU acceleration. ExecuTorch installation and Qualcomm backend compatibility must be checked for your specific Snapdragon Windows machine.
+
+### D. Run and test offline
+
+```powershell
+python -m batteryguardian.server
+```
+
+Open `http://127.0.0.1:8765`, select **Load demonstration**, and inspect the advisory ML results and independent rule-based warnings. To verify offline behavior, disconnect Wi-Fi and Ethernet, restart the app, and repeat the demonstration. Record the device SKU, OS build, model/runtime versions, median and p95 latency, memory use, and offline results; do not claim NPU execution without delegate/profiler evidence.
+
+### E. Commit the upgrade to GitHub
+
+After reviewing changes, run these commands **inside your existing repository**:
+
+```powershell
+git status
+git add README.md batteryguardian ml tests scripts docs requirements-ml.txt artifacts reports checks
+git commit -m "Add PyTorch battery anomaly detection and ExecuTorch export path"
+git push origin main
+```
+
+If your default branch is not `main`, substitute its name. `git add` only stages paths that exist and are not ignored; if your checkout differs, use `git add -A` after reviewing `git status`. Never commit local virtual environments, credentials, proprietary battery records, or large unlicensed datasets. See [Snapdragon deployment and validation](docs/DEPLOYMENT.md) for the remaining **real-data validation, QNN/NPU delegation, and measured hardware testing** tasks.

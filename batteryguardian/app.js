@@ -17,7 +17,7 @@ function render(data) {
   el('alerts').textContent = data.event_count;
   el('temp').textContent = `${data.latest.temperature_c.toFixed(1)}°C`;
   el('explanation').textContent = data.explanation;
-  el('method').textContent = data.method;
+  el('method').textContent = data.method + (data.ml_advisory ? ` | Experimental PyTorch CPU advisory: score=${data.ml_advisory.probability.toFixed(3)}, threshold=${data.ml_advisory.threshold.toFixed(2)}; ${data.ml_advisory.explanation} (${data.ml_advisory.model_source})` : '') + (data.ml_advisory_error ? ` | Optional model unavailable: ${data.ml_advisory_error}` : '');
   const tbody = el('events'); tbody.replaceChildren();
   for (const event of data.events.slice().reverse()) {
     const tr = document.createElement('tr');

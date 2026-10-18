@@ -19,7 +19,16 @@ class Handler(BaseHTTPRequestHandler):
             self.reply(200, (ROOT / 'batteryguardian' / 'app.js').read_bytes(), 'text/javascript; charset=utf-8')
         elif route == '/api/demo':
             text = (ROOT / 'data' / 'demo.csv').read_text(encoding='utf-8')
-            self.reply(200, json.dumps(analyze(parse_csv(text))).encode(), 'application/json')
+            samples = parse_csv(text)
+            result = analyze(samples)
+            checkpoint = ROOT / 'artifacts' / 'battery_model.pt'
+            if checkpoint.is_file() and len(samples) >= 8:
+                try:
+                    from ml.infer import infer
+                    result['ml_advisory'] = infer(samples, str(checkpoint))
+                except (ImportError, RuntimeError, ValueError, OSError) as exc:
+                    result['ml_advisory_error'] = str(exc)
+            self.reply(200, json.dumps(result).encode(), 'application/json')
         elif route == '/health':
             self.reply(200, b'{"status":"ok","offline":true}', 'application/json')
         else:
@@ -33,7 +42,16 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply(413, b'{"error":"Body missing or too large"}', 'application/json')
         try:
             raw = self.rfile.read(int(length)).decode('utf-8')
-            result = analyze(parse_csv(raw))
+            samples = parse_csv(raw)
+            result = analyze(samples)
+            # Advisory model never modifies deterministic safety status.
+            checkpoint = ROOT / 'artifacts' / 'battery_model.pt'
+            if checkpoint.is_file() and len(samples) >= 8:
+                try:
+                    from ml.infer import infer
+                    result['ml_advisory'] = infer(samples, str(checkpoint))
+                except (ImportError, RuntimeError, ValueError, OSError) as exc:
+                    result['ml_advisory_error'] = str(exc)
             self.reply(200, json.dumps(result).encode(), 'application/json')
         except (UnicodeError, ValueError) as exc:
             self.reply(400, json.dumps({'error': str(exc)}).encode(), 'application/json')

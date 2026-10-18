@@ -1,0 +1,34 @@
+{
+  "data_source": "synthetic demonstration only; no real-world fault detection claim",
+  "threshold": 0.1,
+  "train_windows": 720,
+  "validation_windows": 240,
+  "test_windows": 240,
+  "validation": {
+    "TP": 113,
+    "TN": 127,
+    "FP": 0,
+    "FN": 0,
+    "false_positive_rate": 0.0,
+    "false_negative_rate": 0.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "accuracy": 1.0
+  },
+  "test": {
+    "TP": 132,
+    "TN": 108,
+    "FP": 0,
+    "FN": 0,
+    "false_positive_rate": 0.0,
+    "false_negative_rate": 0.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "accuracy": 1.0
+  },
+  "limitations": [
+    "Synthetic patterns are not representative of physical battery faults",
+    "Session-level leakage and distribution shift must be assessed on real data",
+    "This model is not a battery management system or safety interlock"
+  ]
+}

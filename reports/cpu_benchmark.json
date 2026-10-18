@@ -1,0 +1,10 @@
+{
+  "backend": "PyTorch CPU only",
+  "device": "Linux-6.18.55-x86_64-with-glibc2.41",
+  "iterations": 40,
+  "median_ms": 0.046149499999999996,
+  "p95_ms": 0.085029,
+  "python_tracemalloc_peak_bytes": 2776,
+  "memory_note": "tracemalloc excludes native PyTorch allocator memory",
+  "npu_verified": false
+}
