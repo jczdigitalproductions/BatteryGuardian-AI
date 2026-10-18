@@ -96,7 +96,7 @@ These steps upgrade an existing checkout of `BatteryGuardian-AI` to the research
 3. Copy **the contents** of that folder into your existing local Git repository's `BatteryGuardian-AI` directory, preserving the folder structure and replacing old files when prompted. Do **not** copy the ZIP file into the repository or create a second nested `BatteryGuardian-AI` folder.
 4. Keep your existing `.git` folder; do not overwrite or delete it. Review changes with `git status` and `git diff` before committing.
 
-For a **new** GitHub repository, simply extract the ZIP, open PowerShell in the extracted project directory, and follow [Repository upload](#repository-upload).
+For a **new** GitHub repository, extract the ZIP and open PowerShell in the extracted project directory. After configuring the repository remote, follow [section E](#e-commit-the-upgrade-to-github).
 
 ### B. Install and validate the ML environment
 
