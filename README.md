@@ -61,18 +61,6 @@ Local CSV -> validated parser -> deterministic anomaly rules
 4. Keep deterministic safety-related rules outside the model and provide evidence-based local explanations. Add an offline SLM only if hardware, model license, memory, and inference runtime support are verified.
 5. Document measured latency, resource use, and an unplugged-network test.
 
-## Repository upload
-
-```powershell
-git init
-git add .
-git commit -m "Initial BatteryGuardian offline prototype"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/BatteryGuardian-AI.git
-git push -u origin main
-```
-
-Create an empty repository on GitHub first, and replace `YOUR_USERNAME`. GitHub authentication may be required for pushing; the app itself does not need GitHub or internet.
 
 ## Engineering practices
 
