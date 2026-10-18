@@ -1,0 +1,1 @@
+"""BatteryGuardian offline prototype."""
